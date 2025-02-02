@@ -3,7 +3,7 @@ name: Deploy AWS Lambda
 on:
   push:
     branches:
-      - main  # Change to your deployment branch
+      - webScrapeAlgo  # Change to your deployment branch
 
 jobs:
   deploy:
