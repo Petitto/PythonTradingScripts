@@ -13,8 +13,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         uses: actions/setup-python@v5
-          with:
-            python-version: '3.13' 
+        with:
+          python-version: '3.13' 
 
       - name: Setup AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
