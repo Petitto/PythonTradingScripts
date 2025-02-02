@@ -1,0 +1,8 @@
+pandas==1.3.3
+numpy==1.21.2
+matplotlib==3.4.3
+requests==2.26.0
+beautifulsoup4==4.10.0
+lxml==4.6.3
+mplfinance==0.12.7a17
+requests-oauthlib==1.3.0
