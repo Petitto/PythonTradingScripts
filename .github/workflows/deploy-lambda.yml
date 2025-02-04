@@ -28,10 +28,17 @@ jobs:
       - name: Install Dependencies
         run: |
           cd src  # Change to your function directory
-          pip3 install -r requirements.txt -t .
+          pip install -r requirements.txt -t .
 
-      - name: Package and Deploy Lambda
+      - name: Package Lambda Function
         run: |
           cd src
           zip -r lambda_function.zip .
-          aws lambda update-function-code --function-name automatedTradingScript --zip-file fileb://lambda_function.zip
+
+      - name: Upload to S3
+        run: |
+          aws s3 cp lambda_function.zip s3://auto-trading-bucket/1790ffe7-7b30-4e22-a488-efeb23d8522a/lambda_function.zip
+
+      - name: Update Lambda Function
+        run: |
+          aws lambda update-function-code --function-name automatedTradingScript --s3-bucket auto-trading-bucket --s3-key 1790ffe7-7b30-4e22-a488-efeb23d8522a/lambda_function.zip
