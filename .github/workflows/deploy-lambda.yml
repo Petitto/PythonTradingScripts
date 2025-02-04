@@ -37,7 +37,7 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp lambda_function.zip s3://auto-trading-bucket/1790ffe7-7b30-4e22-a488-efeb23d8522a/lambda_function.zip
+          aws s3 cp ./src/lambda_function.zip s3://auto-trading-bucket/1790ffe7-7b30-4e22-a488-efeb23d8522a/lambda_function.zip
 
       - name: Update Lambda Function
         run: |
