@@ -63,7 +63,7 @@ def fetch_stock_prices(tickers, access_token):
     if response.status_code == 200:
         return response.json()
     else:
-        raise Exception(f"Stock API Error: {response.text}")
+        raise Exception(f"Oauth API Error: {response.text}")
     
 
 def getAccountDetails(field, access_token):
