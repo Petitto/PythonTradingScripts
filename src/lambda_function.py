@@ -35,7 +35,7 @@ operations = {
 }
 
 # Replace with actual OAuth2 credentials and token endpoint
-OAUTH2_TOKEN_URL = "https://api.schwabapi.com/v1/oauth/token"
+OAUTH2_TOKEN_URL = "https://api.schwabapi.com/v1/oauth/authorize?response_type=code&client_id=1wzwOrhivb2PkR1UCAUVTKYqC4MTNYlj&scope=readonly&redirect_uri=https://developer.schwab.com/oauth2-redirect.html"
 CLIENT_ID = "u7u5TtvW2F7JhRLqqAatWFLdRboGeuPA"
 CLIENT_SECRET = "GOToxcsa1yxv6LCG"
 
