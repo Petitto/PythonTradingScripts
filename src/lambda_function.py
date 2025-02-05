@@ -35,7 +35,7 @@ operations = {
 }
 
 # Replace with actual OAuth2 credentials and token endpoint
-OAUTH2_TOKEN_URL = "https://api.schwabapi.com/v1/oauth/token?client_id=1u7u5TtvW2F7JhRLqqAatWFLdRboGeuPA&redirect_uri=https://3oldess074.execute-api.us-east-1.amazonaws.com/Prod"
+OAUTH2_TOKEN_URL = "https://api.schwabapi.com/v1/oauth/token"
 CLIENT_ID = "u7u5TtvW2F7JhRLqqAatWFLdRboGeuPA"
 CLIENT_SECRET = "GOToxcsa1yxv6LCG"
 
@@ -68,7 +68,6 @@ def fetch_stock_prices(tickers, access_token):
 
 def getAccountDetails(field, access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
-    params = {"field": field}
     print("params: ", params)
     response = requests.get(STOCK_API_URL, headers=headers, params=params)
     if response.status_code == 200:
@@ -81,8 +80,6 @@ def lambda_handler(event, context):
         # Parse request body
         body = json.loads(event["body"])
         # tickers = body.get("tickers", [])
-        field = body.get("field")
-        print("field: ", field)
 
         # if not tickers or not isinstance(tickers, list):
         #     return {
