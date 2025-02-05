@@ -68,6 +68,7 @@ def fetch_stock_prices(tickers, access_token):
 
 def getAccountDetails(field, access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
+    params = {"field": field}
     print("params: ", params)
     response = requests.get(STOCK_API_URL, headers=headers, params=params)
     if response.status_code == 200:
@@ -80,6 +81,7 @@ def lambda_handler(event, context):
         # Parse request body
         body = json.loads(event["body"])
         # tickers = body.get("tickers", [])
+        field = body.get("fielda")
 
         # if not tickers or not isinstance(tickers, list):
         #     return {
