@@ -49,7 +49,7 @@ def get_oauth2_token():
         auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET),
         data={"grant_type": "client_credentials"}
     )
-
+    print("response: ", response)
     if response.status_code == 200:
         return response.json().get("access_token")
     else:
@@ -99,7 +99,7 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 200,
-            "body": json.dumps(stock_data)
+            "body": json.dumps(position_data)
         }
     
     except Exception as e:
