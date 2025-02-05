@@ -65,14 +65,16 @@ def fetch_stock_prices(tickers, access_token):
     else:
         raise Exception(f"Stock API Error: {response.text}")
     
-def getAccountDetails(field, accss_token):
+
+def getAccountDetails(field, access_token):
     headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(STOCK_API_URL, headers=headers)
+    params = {"field": field}
+    print("params: ", params)
+    response = requests.get(STOCK_API_URL, headers=headers, params=params)
     if response.status_code == 200:
         return response.json()
     else:
         raise Exception(f"Stock API Error: {response.text}")
-
 
 def lambda_handler(event, context):
     try:
@@ -80,6 +82,7 @@ def lambda_handler(event, context):
         body = json.loads(event["body"])
         # tickers = body.get("tickers", [])
         field = body.get("field")
+        print("field: ", field)
 
         # if not tickers or not isinstance(tickers, list):
         #     return {
