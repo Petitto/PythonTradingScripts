@@ -49,7 +49,7 @@ def get_oauth2_token():
         auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET),
         data={"grant_type": "client_credentials"}
     )
-    print("response: ", response)
+    print("response: ", response.json())
     if response.status_code == 200:
         return response.json().get("access_token")
     else:
