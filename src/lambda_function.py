@@ -1,3 +1,6 @@
+import json
+import requests
+from requests.auth import HTTPBasicAuth
 import boto3
 
 # Define the DynamoDB table that Lambda will connect to
@@ -31,18 +34,73 @@ operations = {
     'echo': echo,
 }
 
-def lambda_handler(event, context):
-    '''Provide an event that contains the following keys:
-      - operation: one of the operations in the operations dict below
-      - payload: a JSON object containing parameters to pass to the 
-        operation being performed
-    '''
-    
-    operation = event['operation']
-    payload = event['payload']
-    
-    if operation in operations:
-        return operations[operation](payload)
-        
+# Replace with actual OAuth2 credentials and token endpoint
+OAUTH2_TOKEN_URL = "https://api.schwabapi.com/v1/oauth/token"
+CLIENT_ID = "u7u5TtvW2F7JhRLqqAatWFLdRboGeuPA"
+CLIENT_SECRET = "GOToxcsa1yxv6LCG"
+
+# Replace with actual stock API URL
+STOCK_API_URL = "https://api.schwabapi.com/trader/v1/accounts"
+
+def get_oauth2_token():
+    """ Fetch an OAuth2 token using client credentials grant. """
+    response = requests.post(
+        OAUTH2_TOKEN_URL,
+        auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET),
+        data={"grant_type": "client_credentials"}
+    )
+
+    if response.status_code == 200:
+        return response.json().get("access_token")
     else:
-        raise ValueError(f'Unrecognized operation "{operation}"')
+        raise Exception(f"Failed to get token: {response.text}")
+
+def fetch_stock_prices(tickers, access_token):
+    """ Fetch stock prices from an external API using OAuth2 token. """
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.post(STOCK_API_URL, json={"tickers": tickers}, headers=headers)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Stock API Error: {response.text}")
+    
+def getAccountDetails(field, accss_token):
+    headers = {"Authorization": f"Bearer {access_token}"}
+    response = requests.get(STOCK_API_URL, headers=headers)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Stock API Error: {response.text}")
+
+
+def lambda_handler(event, context):
+    try:
+        # Parse request body
+        body = json.loads(event["body"])
+        # tickers = body.get("tickers", [])
+        field = body.get("field")
+
+        # if not tickers or not isinstance(tickers, list):
+        #     return {
+        #         "statusCode": 400,
+        #         "body": json.dumps({"error": "Invalid input, provide a list of tickers."})
+        #     }
+
+        # Get OAuth2 token
+        access_token = get_oauth2_token()
+
+        # Fetch stock prices
+        # stock_data = fetch_stock_prices(tickers, access_token)
+        position_data = getAccountDetails(field, access_token)
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps(stock_data)
+        }
+    
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
+        }
