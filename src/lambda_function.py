@@ -81,7 +81,7 @@ def lambda_handler(event, context):
         # Parse request body
         body = json.loads(event["body"])
         # tickers = body.get("tickers", [])
-        field = body.get("fielda")
+        field = body.get("fields")
 
         # if not tickers or not isinstance(tickers, list):
         #     return {
