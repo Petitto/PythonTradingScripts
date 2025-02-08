@@ -67,7 +67,7 @@ def fetch_stock_prices(tickers, access_token):
     
 
 def getAccountDetails(field, access_token):
-    headers = {"Authorization": f"Bearer {access_token}"}
+    headers = {"Authorization": f"Bearer {C0.b2F1dGgyLmNkYy5zY2h3YWIuY29t.9Z_TL7KLTys0SGD0ALECf-UjOeu87qGc7lxdXrwynoo}"}
     params = {"field": field}
     print("params: ", params)
     response = requests.get(STOCK_API_URL, headers=headers, params=params)
