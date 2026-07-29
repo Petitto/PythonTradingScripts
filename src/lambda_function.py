@@ -1,10 +1,11 @@
 import json
+import os
 import requests
 from requests.auth import HTTPBasicAuth
 import boto3
 
 # Define the DynamoDB table that Lambda will connect to
-table_name = "AutoTradingTable"
+table_name = os.getenv("DYNAMODB_TABLE_NAME", "AutoTradingTable")
 
 # Create the DynamoDB resource
 dynamo = boto3.resource('dynamodb').Table(table_name)
@@ -34,20 +35,28 @@ operations = {
     'echo': echo,
 }
 
-# Replace with actual OAuth2 credentials and token endpoint
-OAUTH2_TOKEN_URL = "https://api.schwabapi.com/v1/oauth/token"
-CLIENT_ID = "u7u5TtvW2F7JhRLqqAatWFLdRboGeuPA"
-CLIENT_SECRET = "GOToxcsa1yxv6LCG"
+# Runtime configuration should come from environment variables in Lambda.
+OAUTH2_TOKEN_URL = os.getenv("SCHWAB_OAUTH2_TOKEN_URL", "https://api.schwabapi.com/v1/oauth/token")
+STOCK_API_URL = os.getenv("SCHWAB_STOCK_API_URL", "https://api.schwabapi.com/trader/v1/accounts")
 
-# Replace with actual stock API URL
-STOCK_API_URL = "https://api.schwabapi.com/trader/v1/accounts"
+
+def get_required_env(name: str) -> str:
+    value = os.getenv(name)
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
 
 def get_oauth2_token():
-    """ Fetch an OAuth2 token using client credentials grant. """
+    """Fetch an OAuth2 token using client credentials grant."""
+    client_id = get_required_env("SCHWAB_CLIENT_ID")
+    client_secret = get_required_env("SCHWAB_CLIENT_SECRET")
+
     response = requests.post(
         OAUTH2_TOKEN_URL,
-        auth=HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET),
-        data={"grant_type": "client_credentials"}
+        auth=HTTPBasicAuth(client_id, client_secret),
+        data={"grant_type": "client_credentials"},
+        timeout=30,
     )
     print("response: ", response.json())
     if response.status_code == 200:
@@ -66,11 +75,11 @@ def fetch_stock_prices(tickers, access_token):
         raise Exception(f"Oauth API Error: {response.text}")
     
 
-def getAccountDetails(field, access_token):
-    headers = {"Authorization": f"Bearer {C0.b2F1dGgyLmNkYy5zY2h3YWIuY29t.9Z_TL7KLTys0SGD0ALECf-UjOeu87qGc7lxdXrwynoo}"}
+def get_account_details(field, access_token):
+    headers = {"Authorization": f"Bearer {access_token}"}
     params = {"field": field}
     print("params: ", params)
-    response = requests.get(STOCK_API_URL, headers=headers, params=params)
+    response = requests.get(STOCK_API_URL, headers=headers, params=params, timeout=30)
     if response.status_code == 200:
         return response.json()
     else:
@@ -79,8 +88,7 @@ def getAccountDetails(field, access_token):
 def lambda_handler(event, context):
     try:
         # Parse request body
-        body = json.loads(event["body"])
-        # tickers = body.get("tickers", [])
+        body = json.loads(event.get("body", "{}")) if isinstance(event.get("body"), str) else event
         field = body.get("fields")
 
         # if not tickers or not isinstance(tickers, list):
@@ -94,7 +102,7 @@ def lambda_handler(event, context):
 
         # Fetch stock prices
         # stock_data = fetch_stock_prices(tickers, access_token)
-        position_data = getAccountDetails(field, access_token)
+        position_data = get_account_details(field, access_token)
 
         return {
             "statusCode": 200,
